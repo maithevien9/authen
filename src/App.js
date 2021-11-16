@@ -3,11 +3,11 @@ import './App.css';
 import React, { useState } from 'react';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import axios from 'axios';
+import FacebookLogin from 'react-facebook-login';
 
 const clientId = '411768487503-e06gsoh9etobrarghoagn8gbh6fjo7u8.apps.googleusercontent.com';
 function App() {
-  const [showloginButton, setShowloginButton] = useState(true);
-  const [showlogoutButton, setShowlogoutButton] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const onLoginSuccess = async (response) => {
     const res = await axios.post('http://localhost:8000/auth/google', {
       token: response.tokenId,
@@ -15,8 +15,7 @@ function App() {
 
     if (res.data) {
       console.log(res.data.email);
-      setShowloginButton(false);
-      setShowlogoutButton(true);
+      setIsLogin(true);
     }
   };
 
@@ -27,8 +26,7 @@ function App() {
   const onSignoutSuccess = () => {
     alert('You have been logged out successfully');
     console.clear();
-    setShowloginButton(true);
-    setShowlogoutButton(false);
+    setIsLogin(false);
   };
 
   return (
@@ -37,20 +35,17 @@ function App() {
         <img src={logo} className='App-logo' alt='logo' />
 
         <div>
-          {showloginButton ? (
+          {!isLogin ? (
             <GoogleLogin
               clientId={clientId}
               buttonText='Sign In'
               onSuccess={onLoginSuccess}
               onFailure={onLoginFailure}
               cookiePolicy={'single_host_origin'}
-              isSignedIn={true}
             />
-          ) : null}
-
-          {showlogoutButton ? (
+          ) : (
             <GoogleLogout clientId={clientId} buttonText='Sign Out' onLogoutSuccess={onSignoutSuccess}></GoogleLogout>
-          ) : null}
+          )}
         </div>
       </header>
     </div>
