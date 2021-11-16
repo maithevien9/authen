@@ -29,6 +29,10 @@ function App() {
     setIsLogin(false);
   };
 
+  const responseFacebook = (response) => {
+    console.log(response);
+  };
+
   return (
     <div className='App'>
       <header className='App-header'>
@@ -47,6 +51,8 @@ function App() {
             <GoogleLogout clientId={clientId} buttonText='Sign Out' onLogoutSuccess={onSignoutSuccess}></GoogleLogout>
           )}
         </div>
+
+        <FacebookLogin appId='4460230900751107' autoLoad={true} fields='name,email,picture' callback={responseFacebook} />
       </header>
     </div>
   );
