@@ -1,9 +1,10 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import axios from 'axios';
 import FacebookLogin from 'react-facebook-login';
+import { auth, facebookProvider, firebaseConfig } from './configs/base';
 
 const clientId = '411768487503-e06gsoh9etobrarghoagn8gbh6fjo7u8.apps.googleusercontent.com';
 function App() {
@@ -19,6 +20,24 @@ function App() {
     }
   };
 
+  console.log(firebaseConfig);
+
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        console.log({
+          id: authUser.uid,
+          name: authUser.displayName ? authUser.displayName : authUser.email,
+          lastsignIn: authUser.metadata.lastSignInTime,
+          verified: String(authUser.emailVerified),
+          pic: authUser.photoURL
+            ? authUser.photoURL
+            : 'https://lh3.googleusercontent.com/ogw/ADea4I5bHBJbpIvco4Yh1ARth7_gu4dl_QnpyDAU0NW8=s32-c-mo',
+        });
+      }
+    });
+  }, []);
+
   const onLoginFailure = (res) => {
     console.log('Login Failed:', res);
   };
@@ -33,12 +52,18 @@ function App() {
     console.log(response);
   };
 
+  const handleFacebook = () => {
+    auth.signInWithPopup(facebookProvider);
+  };
+
   return (
     <div className='App'>
       <header className='App-header'>
         <img src={logo} className='App-logo' alt='logo' />
 
-        <div>
+        <div onClick={handleFacebook}>login with facebook</div>
+
+        {/* <div>
           {!isLogin ? (
             <GoogleLogin
               clientId={clientId}
@@ -52,7 +77,7 @@ function App() {
           )}
         </div>
 
-        <FacebookLogin appId='4460230900751107' autoLoad={true} fields='name,email,picture' callback={responseFacebook} />
+        <FacebookLogin appId='4460230900751107' fields='name,email,picture' callback={responseFacebook} /> */}
       </header>
     </div>
   );
